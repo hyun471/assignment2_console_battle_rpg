@@ -87,10 +87,12 @@ class BattleStart {
               print(
                 "${player!.inputName}(이)가 방어 태세를 취하여 ${player!.shield} 만큼 체력을 얻었습니다.",
               );
+              player!.hp += player!.shield;
             } else if (heal < 6) {
               print("${player!.inputName}(이)가 방어 태세를 취하여 $heal 만큼 체력을 얻었습니다.");
-            } // 플레이어 방어
-            break;
+              player!.hp += heal;
+            }
+            break; // 플레이어 방어
         }
         if (continueCheck == true) {
           print("");
