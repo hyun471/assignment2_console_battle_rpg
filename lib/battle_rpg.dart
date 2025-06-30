@@ -40,8 +40,9 @@ class BattleStart {
       var parts = line.split(",");
       String monsterName1 = parts[0];
       int monsterHp1 = int.parse(parts[1]);
-      int monsterPower1 = int.parse(parts[2]);
-      monsterList.add(MonsterModel(monsterName1, monsterHp1, monsterPower1));
+      int maxPower1 = int.parse(parts[2]);
+      int monsterDamage = Random().nextInt(maxPower1) + (player!.shield + 1);
+      monsterList.add(MonsterModel(monsterName1, monsterHp1, monsterDamage));
     }
   } // 몬스터 정보
 
