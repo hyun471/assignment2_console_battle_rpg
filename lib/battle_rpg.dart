@@ -18,6 +18,7 @@ class BattleStart {
   List<MonsterModel> monsterList = [];
   PlayerModel? player;
   int killMoster = 0;
+  bool continueCheck = true;
 
   void showPlayer(String inputName) {
     final playerFile = File('assets/characters.txt');
@@ -54,8 +55,14 @@ class BattleStart {
     MonsterModel selectedMonster = monsterList[index];
     int round = 1;
     print("몬스터 ${selectedMonster.monsterName}(이)가 출현했습니다.");
-    selectedMonster.monsterShow();
-    while (selectedMonster.monsterHp != 0) {
+    if (player!.hp != 0) {
+      continueCheck == true;
+    } else if (player!.hp == 0) {
+      continueCheck == false;
+    }
+    while (continueCheck) {
+      selectedMonster.monsterShow();
+      player?.show(); // 상태 표시
       print("");
       print("$round round");
       if (player!.hp != 0) {
@@ -70,7 +77,7 @@ class BattleStart {
               "${player!.inputName}(이)가 ${selectedMonster.monsterName}에게 ${player!.power}의 데미지를 입혔습니다.",
             );
             if (selectedMonster.monsterHp <= 0) {
-              selectedMonster.monsterHp = 0;
+              continueCheck = false;
             } // 플레이어 공격
             break;
           case "2":
@@ -84,24 +91,23 @@ class BattleStart {
             } // 플레이어 방어
             break;
         }
-        print("");
-        print("${selectedMonster.monsterName}의 턴");
-        int realDamages = selectedMonster.monsterPower - player!.shield;
-        player!.hp -= realDamages;
-        if (player!.hp <= 0) {
-          player!.hp = 0;
+        if (continueCheck == true) {
+          print("");
+          print("${selectedMonster.monsterName}의 턴");
+          int realDamages = selectedMonster.monsterPower - player!.shield;
+          player!.hp -= realDamages;
+          if (player!.hp <= 0) {
+            player!.hp = 0;
+          }
+          print(
+            "${selectedMonster.monsterName}(이)가 ${player!.inputName}에게 $realDamages를 입혔습니다.",
+          ); // 몬스터 공격
+          round += 1;
         }
-        print(
-          "${selectedMonster.monsterName}(이)가 ${player!.inputName}에게 $realDamages를 입혔습니다.",
-        ); // 몬스터 공격
-        round += 1;
-        print("");
-        player?.show();
-        selectedMonster.monsterShow();
-        // 상태 표시
       } else if (player!.hp == 0) {
         print("");
         print("Game Over");
+        continueCheck = false;
         stdout.write("결과를 저장하시겠습니까? ( y / n ) : ");
         String? result1 = stdin.readLineSync() ?? "";
         if (result1.toLowerCase() == "y") {
@@ -109,6 +115,7 @@ class BattleStart {
           final saveResult = result.writeAsStringSync(
             "${player!.inputName} - 남은 체력 : ${player!.hp}, 처치한 몬스터 수 : ${killMoster}",
           );
+          print("");
           print("저장되었습니다.");
         } else {
           return;
@@ -118,16 +125,25 @@ class BattleStart {
     killMoster += 1;
     print("");
     print("축하합니다. 몬스터 ${selectedMonster.monsterName}(을)를 물리쳤습니다.");
-    stdout.write("결과를 저장하시겠습니까? ( y / n ) : ");
-    String? result2 = stdin.readLineSync() ?? "";
-    if (result2.toLowerCase() == "y") {
-      final result = File('assets/result.txt');
-      final saveResult = result.writeAsStringSync(
-        "${player!.inputName} - 남은 체력 : ${player!.hp}, 처치한 몬스터 수 : ${killMoster}",
-      );
-      print("저장되었습니다.");
-    } else {
-      return;
-    } // 저장
+    print("");
+    stdout.write("다음 몬스터와 싸우시겠습니까? ( y / n ) : ");
+    String? battleContinue = stdin.readLineSync() ?? "";
+    if (battleContinue.toLowerCase() == "n") {
+      stdout.write("결과를 저장하시겠습니까? ( y / n ) : ");
+      String? result2 = stdin.readLineSync() ?? "";
+      if (result2.toLowerCase() == "y") {
+        final result = File('assets/result.txt');
+        final saveResult = result.writeAsStringSync(
+          "${player!.inputName} - 남은 체력 : ${player!.hp}, 처치한 몬스터 수 : ${killMoster}",
+        );
+        print("저장되었습니다.");
+        continueCheck = false;
+      } else if (result2.toLowerCase() == "n") {
+        print("게임을 종료합니다.");
+        continueCheck = false;
+      }
+    } else if (battleContinue.toLowerCase() == "y") {
+      continueCheck = true;
+    }
   } // 배틀 메서드
 }

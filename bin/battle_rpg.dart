@@ -13,7 +13,9 @@ void main() {
   rpgRun.showPlayer(inputName);
   print("");
   rpgRun.saveMonster();
-  rpgRun.battleStart();
+  do {
+    rpgRun.battleStart();
+  } while (rpgRun.continueCheck);
 }
 // 캐릭터 정보 클래스 생성
 // ㄴ 캐릭터 정보(이름, 체력, 공격력, 방어력) 파일에서 추출
