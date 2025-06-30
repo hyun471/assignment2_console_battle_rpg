@@ -1,7 +1,17 @@
-void main() {
-  print('Hello world!');
-}
+import 'dart:io';
+import 'package:battle_rpg/battle_rpg.dart';
+import 'package:battle_rpg/player_model.dart';
 
+void main() {
+  print("");
+  print("Battle RPG에 오신걸 환영합니다!");
+  print("");
+  stdout.write("캐릭터의 이름을 입력하세요: ");
+  String? inputName = stdin.readLineSync() ?? "";
+  BattleStart rpgRun = BattleStart();
+  rpgRun.showPlayer(inputName);
+  print("");
+}
 // 캐릭터 정보 클래스 생성
 // ㄴ 캐릭터 정보(이름, 체력, 공격력, 방어력) 파일에서 추출
 // ㄴ 공격 메서드, 방어 메서드, 상태(체력, 공격력, 방어력) 메서드
