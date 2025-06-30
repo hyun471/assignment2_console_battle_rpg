@@ -16,8 +16,8 @@ import 'package:battle_rpg/player_model.dart';
 // ㄴ공격 기능
 class BattleStart {
   List<MonsterModel> monsterList = [];
-  List<int> monsterAction = [1, 2];
   PlayerModel? player;
+  int killMoster = 0;
 
   void showPlayer(String inputName) {
     final playerFile = File('assets/characters.txt');
@@ -42,7 +42,7 @@ class BattleStart {
       int monsterPower1 = int.parse(parts[2]);
       monsterList.add(MonsterModel(monsterName1, monsterHp1, monsterPower1));
     }
-  }
+  } // 불러온 파일은 몬스터의 최대 공격력이고 랜덤값이 들어가게 변경해야함
 
   void battleStart() {
     if (player == null) {
@@ -52,26 +52,67 @@ class BattleStart {
     int index = random.nextInt(monsterList.length);
     MonsterModel selectedMonster = monsterList[index];
     int round = 1;
-    print("$round round");
     print("몬스터 ${selectedMonster.monsterName}(이)가 출현했습니다.");
     selectedMonster.monsterShow();
     while (selectedMonster.monsterHp == 0) {
+      print("$round round");
       if (player!.hp != 0) {
+        print("");
         print("${player!.inputName}의 턴");
         stdout.write("행동을 선택하세요. (1: 공격, 2: 방어)");
         String? playerAction = stdin.readLineSync() ?? "";
         switch (playerAction) {
           case "1":
+            selectedMonster.monsterHp -= player!.power;
+            print(
+              "${player!.inputName}(이)가 ${selectedMonster.monsterName}에게 ${player!.power}의 데미지를 입혔습니다.",
+            );
+            if (selectedMonster.monsterHp <= 0) {
+              selectedMonster.monsterHp = 0;
+            }
             break;
           case "2":
+            int heal = 50 - player!.hp;
+            if (heal > 6) {
+              print(
+                "${player!.inputName}(이)가 방어 태세를 취하여 ${player!.shield} 만큼 체력을 얻었습니다.",
+              );
+            } else if (heal < 6) {
+              print("${player!.inputName}(이)가 방어 태세를 취하여 $heal 만큼 체력을 얻었습니다.");
+            }
             break;
         }
+        print("");
+        print("${selectedMonster.monsterName}의 턴");
+        int realDamages = selectedMonster.monsterPower - player!.shield;
+        player!.hp -= realDamages;
+        if (player!.hp <= 0) {
+          player!.hp = 0;
+        }
+        print(
+          "${selectedMonster.monsterName}(이)가 ${player!.inputName}에게 $realDamages를 입혔습니다.",
+        );
+        round += 1;
       } else if (player!.hp == 0) {
+        print("");
         print("Game Over");
-        print("결과를 저장하시겠습니까?");
+        stdout.write("결과를 저장하시겠습니까? ( y / n )");
+        String? result1 = stdin.readLineSync() ?? "";
+        if (result1.toLowerCase() == "y") {
+          //저장하기
+        } else {
+          return;
+        }
       }
     }
+    killMoster += 1;
     print("축하합니다. 몬스터 ${selectedMonster.monsterName}(을)를 물리쳤습니다.");
-    print("결과를 저장하시겠습니까?");
+    stdout.write("결과를 저장하시겠습니까? ( y / n )");
+    String? result2 = stdin.readLineSync() ?? "";
+    if (result2.toLowerCase() == "y") {
+      //저장하기
+    } else {
+      return;
+    }
   }
 }
