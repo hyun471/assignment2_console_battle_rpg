@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:battle_rpg/monster_model.dart';
 import 'package:battle_rpg/player_model.dart';
 // 게임 시작 클래스 생성
@@ -15,6 +16,8 @@ import 'package:battle_rpg/player_model.dart';
 // ㄴ공격 기능
 class BattleStart {
   List<MonsterModel> monsterList = [];
+  List<int> monsterAction = [1, 2];
+  PlayerModel? player;
 
   void showPlayer(String inputName) {
     final playerFile = File('assets/characters.txt');
@@ -24,16 +27,11 @@ class BattleStart {
     int playerHp = int.parse(pPart[0]);
     int playerPower = int.parse(pPart[1]);
     int playerShield = int.parse(pPart[2]);
-    PlayerModel character = PlayerModel(
-      playerName,
-      playerHp,
-      playerPower,
-      playerShield,
-    );
-    character.show();
+    player = PlayerModel(playerName, playerHp, playerPower, playerShield);
+    player?.show();
   }
 
-  void showMonster() {
+  void saveMonster() {
     final monsterFile = File('assets/monsters.txt');
     final lines = monsterFile.readAsLinesSync();
 
@@ -42,8 +40,38 @@ class BattleStart {
       String monsterName1 = parts[0];
       int monsterHp1 = int.parse(parts[1]);
       int monsterPower1 = int.parse(parts[2]);
+      monsterList.add(MonsterModel(monsterName1, monsterHp1, monsterPower1));
     }
-    monsterList.add(MonsterModel(monsterName1, monsterHp1, monsterPower1));
-    monsterList.monsterShow();
+  }
+
+  void battleStart() {
+    if (player == null) {
+      return;
+    }
+    final random = Random();
+    int index = random.nextInt(monsterList.length);
+    MonsterModel selectedMonster = monsterList[index];
+    int round = 1;
+    print("$round round");
+    print("몬스터 ${selectedMonster.monsterName}(이)가 출현했습니다.");
+    selectedMonster.monsterShow();
+    while (selectedMonster.monsterHp == 0) {
+      if (player!.hp != 0) {
+        print("${player!.inputName}의 턴");
+        stdout.write("행동을 선택하세요. (1: 공격, 2: 방어)");
+        String? playerAction = stdin.readLineSync() ?? "";
+        switch (playerAction) {
+          case "1":
+            break;
+          case "2":
+            break;
+        }
+      } else if (player!.hp == 0) {
+        print("Game Over");
+        print("결과를 저장하시겠습니까?");
+      }
+    }
+    print("축하합니다. 몬스터 ${selectedMonster.monsterName}(을)를 물리쳤습니다.");
+    print("결과를 저장하시겠습니까?");
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:battle_rpg/battle_rpg.dart';
 import 'package:battle_rpg/player_model.dart';
 
@@ -11,6 +12,8 @@ void main() {
   BattleStart rpgRun = BattleStart();
   rpgRun.showPlayer(inputName);
   print("");
+  rpgRun.saveMonster();
+  rpgRun.battleStart();
 }
 // 캐릭터 정보 클래스 생성
 // ㄴ 캐릭터 정보(이름, 체력, 공격력, 방어력) 파일에서 추출
