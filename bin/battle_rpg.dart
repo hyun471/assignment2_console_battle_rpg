@@ -7,7 +7,7 @@ void main() {
   print("");
   print("Battle RPG에 오신걸 환영합니다!");
   print("");
-  stdout.write("캐릭터의 이름을 입력하세요: ");
+  stdout.write("캐릭터의 이름을 입력하세요 (영문만 가능) : ");
   String? inputName = stdin.readLineSync() ?? "";
   BattleStart rpgRun = BattleStart();
   rpgRun.showPlayer(inputName);
