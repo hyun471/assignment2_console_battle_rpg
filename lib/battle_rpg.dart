@@ -29,12 +29,12 @@ class BattleStart {
     int playerShield = int.parse(pPart[2]);
     player = PlayerModel(playerName, playerHp, playerPower, playerShield);
     player?.show();
-  }
+  } // 플레이어 정보
 
   void saveMonster() {
     final monsterFile = File('assets/monsters.txt');
     final lines = monsterFile.readAsLinesSync();
-
+    // 불러온 파일은 몬스터의 최대 공격력이고 랜덤값이 들어가게 변경해야함
     for (var line in lines) {
       var parts = line.split(",");
       String monsterName1 = parts[0];
@@ -42,8 +42,9 @@ class BattleStart {
       int monsterPower1 = int.parse(parts[2]);
       monsterList.add(MonsterModel(monsterName1, monsterHp1, monsterPower1));
     }
-  } // 불러온 파일은 몬스터의 최대 공격력이고 랜덤값이 들어가게 변경해야함
+  } // 몬스터 정보
 
+  // 추상 클래스로 다시 구성하는거 생각해보기
   void battleStart() {
     if (player == null) {
       return;
@@ -54,12 +55,13 @@ class BattleStart {
     int round = 1;
     print("몬스터 ${selectedMonster.monsterName}(이)가 출현했습니다.");
     selectedMonster.monsterShow();
-    while (selectedMonster.monsterHp == 0) {
+    while (selectedMonster.monsterHp != 0) {
+      print("");
       print("$round round");
       if (player!.hp != 0) {
         print("");
         print("${player!.inputName}의 턴");
-        stdout.write("행동을 선택하세요. (1: 공격, 2: 방어)");
+        stdout.write("행동을 선택하세요. (1: 공격, 2: 방어) : ");
         String? playerAction = stdin.readLineSync() ?? "";
         switch (playerAction) {
           case "1":
@@ -69,7 +71,7 @@ class BattleStart {
             );
             if (selectedMonster.monsterHp <= 0) {
               selectedMonster.monsterHp = 0;
-            }
+            } // 플레이어 공격
             break;
           case "2":
             int heal = 50 - player!.hp;
@@ -79,7 +81,7 @@ class BattleStart {
               );
             } else if (heal < 6) {
               print("${player!.inputName}(이)가 방어 태세를 취하여 $heal 만큼 체력을 얻었습니다.");
-            }
+            } // 플레이어 방어
             break;
         }
         print("");
@@ -91,28 +93,41 @@ class BattleStart {
         }
         print(
           "${selectedMonster.monsterName}(이)가 ${player!.inputName}에게 $realDamages를 입혔습니다.",
-        );
+        ); // 몬스터 공격
         round += 1;
+        print("");
+        player?.show();
+        selectedMonster.monsterShow();
+        // 상태 표시
       } else if (player!.hp == 0) {
         print("");
         print("Game Over");
-        stdout.write("결과를 저장하시겠습니까? ( y / n )");
+        stdout.write("결과를 저장하시겠습니까? ( y / n ) : ");
         String? result1 = stdin.readLineSync() ?? "";
         if (result1.toLowerCase() == "y") {
-          //저장하기
+          final result = File('assets/result.txt');
+          final saveResult = result.writeAsStringSync(
+            "${player!.inputName} - 남은 체력 : ${player!.hp}, 처치한 몬스터 수 : ${killMoster}",
+          );
+          print("저장되었습니다.");
         } else {
           return;
         }
-      }
-    }
+      } // 저장
+    } // 배틀
     killMoster += 1;
+    print("");
     print("축하합니다. 몬스터 ${selectedMonster.monsterName}(을)를 물리쳤습니다.");
-    stdout.write("결과를 저장하시겠습니까? ( y / n )");
+    stdout.write("결과를 저장하시겠습니까? ( y / n ) : ");
     String? result2 = stdin.readLineSync() ?? "";
     if (result2.toLowerCase() == "y") {
-      //저장하기
+      final result = File('assets/result.txt');
+      final saveResult = result.writeAsStringSync(
+        "${player!.inputName} - 남은 체력 : ${player!.hp}, 처치한 몬스터 수 : ${killMoster}",
+      );
+      print("저장되었습니다.");
     } else {
       return;
-    }
-  }
+    } // 저장
+  } // 배틀 메서드
 }
