@@ -120,33 +120,38 @@ class BattleStart {
           );
           print("");
           print("저장되었습니다.");
+          return;
         } else {
           return;
         }
       } // 저장
     } // 배틀
-    killMoster += 1;
-    print("");
-    print("축하합니다. 몬스터 ${selectedMonster.monsterName}(을)를 물리쳤습니다.");
-    print("");
-    stdout.write("다음 몬스터와 싸우시겠습니까? ( y / n ) : ");
-    String? battleContinue = stdin.readLineSync() ?? "";
-    if (battleContinue.toLowerCase() == "n") {
-      stdout.write("결과를 저장하시겠습니까? ( y / n ) : ");
-      String? result2 = stdin.readLineSync() ?? "";
-      if (result2.toLowerCase() == "y") {
-        final result = File('assets/result.txt');
-        final saveResult = result.writeAsStringSync(
-          "${player!.inputName} - 남은 체력 : ${player!.hp}, 처치한 몬스터 수 : ${killMoster}",
-        );
-        print("저장되었습니다.");
-        continueCheck = false;
-      } else if (result2.toLowerCase() == "n") {
-        print("게임을 종료합니다.");
-        continueCheck = false;
+    if (player!.hp == 0) {
+      return;
+    } else {
+      killMoster += 1;
+      print("");
+      print("축하합니다. 몬스터 ${selectedMonster.monsterName}(을)를 물리쳤습니다.");
+      print("");
+      stdout.write("다음 몬스터와 싸우시겠습니까? ( y / n ) : ");
+      String? battleContinue = stdin.readLineSync() ?? "";
+      if (battleContinue.toLowerCase() == "n") {
+        stdout.write("결과를 저장하시겠습니까? ( y / n ) : ");
+        String? result2 = stdin.readLineSync() ?? "";
+        if (result2.toLowerCase() == "y") {
+          final result = File('assets/result.txt');
+          final saveResult = result.writeAsStringSync(
+            "${player!.inputName} - 남은 체력 : ${player!.hp}, 처치한 몬스터 수 : ${killMoster}",
+          );
+          print("저장되었습니다.");
+          continueCheck = false;
+        } else if (result2.toLowerCase() == "n") {
+          print("게임을 종료합니다.");
+          continueCheck = false;
+        }
+      } else if (battleContinue.toLowerCase() == "y") {
+        continueCheck = true;
       }
-    } else if (battleContinue.toLowerCase() == "y") {
-      continueCheck = true;
     }
   } // 배틀 메서드
 }
