@@ -35,7 +35,6 @@ class BattleStart {
   void saveMonster() {
     final monsterFile = File('assets/monsters.txt');
     final lines = monsterFile.readAsLinesSync();
-    // 불러온 파일은 몬스터의 최대 공격력이고 랜덤값이 들어가게 변경해야함
     for (var line in lines) {
       var parts = line.split(",");
       String monsterName1 = parts[0];
@@ -43,7 +42,7 @@ class BattleStart {
       int maxPower1 = int.parse(parts[2]);
       int monsterDamage = Random().nextInt(maxPower1) + (player!.shield + 1);
       monsterList.add(MonsterModel(monsterName1, monsterHp1, monsterDamage));
-    }
+    } // 공격력 랜덤값으로 들어가게 변경 완료
   } // 몬스터 정보
 
   // 추상 클래스로 다시 구성하는거 생각해보기
