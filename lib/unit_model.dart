@@ -15,8 +15,8 @@ abstract class Unit {
     print("$name(이)가 ${target.name}에게 ${power - target.shield}의 데미지를 입혔습니다.");
   }
 
-  void heal(playerHp) {
-    int heal = 50 - hp;
+  void heal(int playerMaxHp) {
+    int heal = playerMaxHp - hp;
     if (heal >= 6) {
       print("$name(이)가 방어 태세를 취하여 $shield 만큼 체력을 얻었습니다.");
       hp += shield;
@@ -25,4 +25,11 @@ abstract class Unit {
       hp += heal;
     }
   }
+
+  void bombAttack(Unit target, int rollBomb) {
+    target.hp -= (rollBomb - target.shield);
+    print(
+      "$name(이)가 ${target.name}에게 폭탄으로 ${rollBomb - target.shield}의 데미지를 입혔습니다.",
+    );
+  } // 폭탄 공격 메서드
 }

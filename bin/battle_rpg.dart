@@ -1,12 +1,12 @@
 import 'package:battle_rpg/battle_rpg.dart';
 import 'package:battle_rpg/monster_model.dart';
-import 'package:battle_rpg/player_model.dart';
 
-void main(dynamic player) {
-  PlayerModel player = PlayerModel.playerStatsLoad("Player");
-  BattleRPG rpgRun = BattleRPG(player);
-  rpgRun.gameStart();
-  List<MonsterModel> monsters = MonsterModel.monsterStatsLoad(player.shield);
+void main() {
+  BattleRPG rpgRun = BattleRPG.gameStart();
+  rpgRun.playerMaxHp = rpgRun.player!.hp;
+  List<MonsterModel> monsters = MonsterModel.monsterStatsLoad(
+    rpgRun.player!.shield,
+  );
   do {
     MonsterModel? selectedMonster = rpgRun.monsterAppear(monsters);
     if (selectedMonster == null) {

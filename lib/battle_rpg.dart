@@ -21,17 +21,26 @@ class BattleRPG {
   int killMonster = 0;
   bool continueCheck = true;
   int round = 1;
+  int bomb = 1;
+  int playerMaxHp = 50;
 
   BattleRPG(this.player);
 
-  void gameStart() {
+  static BattleRPG gameStart() {
     print("");
     print("Battle RPG에 오신걸 환영합니다!");
     print("");
     stdout.write("캐릭터의 이름을 입력하세요 (영문만 가능) : ");
     String? inputName = stdin.readLineSync() ?? "";
     PlayerModel? player = PlayerModel.playerStatsLoad(inputName);
+    int rollHp = Random().nextInt(10);
+    if (rollHp <= 3) {
+      player.hp += 10;
+      print("알 수 없는 힘에 의하여 체력이 증가하였습니다.");
+    } // 확률적 체력 증가
     player.show();
+
+    return BattleRPG(player);
   } // 게임 첫 시작
 
   MonsterModel? monsterAppear(List<MonsterModel> monsterList) {
@@ -63,7 +72,7 @@ class BattleRPG {
     String? result1 = stdin.readLineSync() ?? "n";
     if (result1.toLowerCase() == "y") {
       final result = File('assets/result.txt');
-      final saveResult = result.writeAsStringSync(
+      result.writeAsStringSync(
         "${player!.name} - 남은 체력 : ${player!.hp}, 처치한 몬스터 수 : $killMonster",
       );
       print("");
@@ -88,10 +97,18 @@ class BattleRPG {
       player?.show(); // 상태 표시
       print("");
       print("$round round");
+      if (round % 3 == 0) {
+        selectedMonster.shield += 2;
+        print("");
+        print("${selectedMonster.name}의 방어력이 증가하였습니다.");
+        print("");
+        selectedMonster.show();
+        player?.show();
+      } // 3턴마다 방어력 2씩 증가
       if (player!.hp != 0) {
         print("");
         print("${player!.name}의 턴");
-        stdout.write("행동을 선택하세요. (1: 공격, 2: 방어) : ");
+        stdout.write("행동을 선택하세요. (1: 공격, 2: 힐, 3: 폭탄($bomb)) : ");
         String? playerAction = stdin.readLineSync() ?? "";
         switch (playerAction) {
           case "1":
@@ -102,8 +119,18 @@ class BattleRPG {
             } // 플레이어 공격
             break;
           case "2":
-            player?.heal(player);
+            player?.heal(playerMaxHp);
             break; // 플레이어 방어
+          case "3":
+            if (bomb != 0) {
+              int rollBomb = Random().nextInt(15) + (5);
+              player?.bombAttack(selectedMonster, rollBomb);
+              bomb -= 1;
+            } else if (bomb == 0) {
+              print("폭탄이 없어 방어합니다.");
+              player?.heal(playerMaxHp);
+            } // 폭탄 사용
+            break;
         }
         if (continueCheck == true) {
           print("");
@@ -112,15 +139,15 @@ class BattleRPG {
           print("");
           if (player!.hp <= 0) {
             player!.hp = 0;
+            print("");
+            print("Game Over");
+            gameSave();
+            continueCheck == false;
           }
           round += 1;
-        }
-      } else if (player!.hp == 0) {
-        print("");
-        print("Game Over");
-        gameSave();
-      } // 저장
-    } // 배틀
+        } // 저장
+      } // 배틀
+    }
     if (player!.hp == 0) {
       return;
     } else {
@@ -136,6 +163,6 @@ class BattleRPG {
         continueCheck = true;
         round = 1;
       }
-    }
-  } // 배틀 메서드
+    } // 배틀 종료
+  }
 }

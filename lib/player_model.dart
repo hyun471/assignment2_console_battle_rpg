@@ -14,7 +14,6 @@ class PlayerModel extends Unit {
     final playerFile = File('assets/characters.txt');
     final pLine = playerFile.readAsLinesSync()[0];
     final pPart = pLine.split(",");
-    String? playerName = inputName;
     int playerHp = int.tryParse(pPart[0]) ?? 0;
     int playerPower = int.tryParse(pPart[1]) ?? 0;
     int playerShield = int.tryParse(pPart[2]) ?? 0;
